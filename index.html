@@ -1,24 +1,225 @@
 <!DOCTYPE html>
-<html>
+<html lang="lt">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Block Breaker</title>
+    <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Tailwind konfigūracija
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {}
+            }
+        }
+    </script>
     <style>
         canvas {
-            border: 2px solid white;
-            background: black;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: linear-gradient(to bottom, #1a1a2e, #16213e);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            width: 600px;
+            height: 600px;
         }
         body {
+            margin: 0;
+            background: radial-gradient(circle at center, #0f172a, #020617);
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        .game-container {
+            position: relative;
+            padding: 2rem;
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .player-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .player-info {
+            color: white;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .score-board {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            color: white;
+            margin-top: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: #333;
+            z-index: 1000;
+        }
+        .menu-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+            max-width: 400px;
+            width: 100%;
+        }
+        .menu-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 1rem 2rem;
+            margin: 0.5rem;
+            border-radius: 8px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .menu-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .game-area {
+            display: none;
+        }
+        .game-area.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .games-container {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
         }
     </style>
 </head>
-<body>
-    <canvas id="gameCanvas" width="600" height="600"></canvas>
-    <script src="game.js"></script>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+    <div id="root" class="w-full max-w-7xl">
+        <!-- Pradžios meniu -->
+        <div id="startMenu" class="menu-overlay">
+            <div class="menu-container">
+                <h1 class="text-3xl font-bold mb-8">Block Breaker</h1>
+                <div class="flex flex-col gap-4">
+                    <button class="menu-button" onclick="startGame('single')">1 Žaidėjas</button>
+                    <button class="menu-button" onclick="startGame('multi')">2 Žaidėjai</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Žaidimo zona -->
+        <div id="gameArea" class="game-area">
+            <div class="games-container">
+                <div id="player1" class="player-container">
+                    <div class="player-info">Kairysis Žaidėjas (A, S, D)</div>
+                    <canvas id="gameCanvas1" width="600" height="600"></canvas>
+                </div>
+                <div id="player2" class="player-container" style="display: none;">
+                    <div class="player-info">Dešinysis Žaidėjas (←, ↓, →)</div>
+                    <canvas id="gameCanvas2" width="600" height="600"></canvas>
+                </div>
+            </div>
+
+            <!-- Žaidimo pradžios mygtukas -->
+            <div id="startGameButton" class="mt-4 mb-4">
+                <button class="menu-button text-2xl px-8 py-4">Pradėti Žaidimą!</button>
+            </div>
+            
+            <div class="score-board">
+                <h2 class="text-2xl font-bold mb-4">Geriausi Rezultatai</h2>
+                <div id="highScores" class="space-y-2">
+                    <!-- Čia bus įterpiami rezultatai -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { GameManager } from './src/managers/GameManager.js';
+        
+        window.startGame = function(mode) {
+            try {
+                console.log('Pradedamas žaidimas:', mode);
+                document.getElementById('startMenu').style.display = 'none';
+                document.getElementById('gameArea').classList.add('active');
+                
+                if (mode === 'single') {
+                    document.getElementById('player2').style.display = 'none';
+                    document.getElementById('player1').style.width = '100%';
+                    document.querySelector('#player1 .player-info').textContent = 'Žaidėjas (A, S, D arba ←, ↓, →)';
+                } else {
+                    document.getElementById('player2').style.display = 'flex';
+                    document.getElementById('player1').style.width = 'auto';
+                    document.querySelector('#player1 .player-info').textContent = 'Kairysis Žaidėjas (A, S, D)';
+                }
+
+                const startButton = document.getElementById('startGameButton');
+                startButton.style.display = 'block';
+                
+                startButton.querySelector('button').onclick = function() {
+                    if (!window.gameStarted) {
+                        window.gameStarted = true;
+                        this.style.display = 'none';
+                        GameManager.getInstance().startGame(mode);
+                    }
+                };
+            } catch (error) {
+                console.error('Žaidimo paleidimo klaida:', error);
+                alert(`Klaida: ${error.message}`);
+            }
+        };
+    </script>
+    
+    <script type="text/babel">
+        function ScoreBoard({ scores }) {
+            return (
+                <div className="grid grid-cols-1 gap-2">
+                    {scores.map((score, index) => (
+                        <div key={index} className="flex items-center justify-between p-2 bg-white/5 rounded-lg">
+                            <div className="flex items-center gap-4">
+                                <span className="text-amber-400 font-bold">{index + 1}</span>
+                                <span className="text-white">{score.name}</span>
+                            </div>
+                            <div className="flex gap-4 text-sm">
+                                <span className="text-emerald-400">{score.score} tšk.</span>
+                                <span className="text-blue-400">{Math.floor(score.time / 60)}:{(score.time % 60).toString().padStart(2, '0')}</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        function updateScoreBoard() {
+            const scores = JSON.parse(localStorage.getItem('blockBreakerScores') || '[]');
+            ReactDOM.render(
+                <ScoreBoard scores={scores} />,
+                document.getElementById('highScores')
+            );
+        }
+
+        setInterval(updateScoreBoard, 1000);
+        updateScoreBoard();
+    </script>
 </body>
 </html> 
