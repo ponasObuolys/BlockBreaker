@@ -91,8 +91,20 @@ speed = 2
 while True:
     wn.update()
 
-    # Increase the ball speed
-    speed += 0.01
+    # Increase the ball speed (su apribojimu)
+    if speed < 4:  # Nustatome maksimalų greitį
+        speed += 0.001  # Sumažiname greičio didėjimą
+    
+    # Tikrinti ar laimėjote
+    if len(block_list) == 0:
+        win_pen = turtle.Turtle()
+        win_pen.speed(0)
+        win_pen.color("white")
+        win_pen.penup()
+        win_pen.setposition(0, 0)
+        win_pen.write("You Win!", False, align="center", font=("Arial", 24, "normal"))
+        win_pen.hideturtle()
+        break
 
     # Move the ball
     ball.setx(ball.xcor() + ball.dx * speed)
