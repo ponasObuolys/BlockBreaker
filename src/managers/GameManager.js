@@ -1,4 +1,6 @@
 import { Game } from '../Game.js';
+import { AudioManager } from './audio/AudioManager.js';
+import { AudioSettings } from './audio/AudioSettings.js';
 
 export class GameError extends Error {
     constructor(message) {
@@ -22,6 +24,73 @@ export class GameManager {
         this.game2 = null;
         this.gameLoop = null;
         this.isRunning = false;
+        
+        // Inicializuojame garso valdiklį
+        this.audioManager = AudioManager.getInstance();
+        
+        // Sukuriame garso nustatymų mygtuką
+        this.createAudioSettingsButton();
+    }
+
+    /**
+     * Sukuria garso nustatymų mygtuką
+     */
+    createAudioSettingsButton() {
+        // Sukuriame mygtuką
+        const button = document.createElement('button');
+        button.textContent = '🔊';
+        button.title = 'Garso nustatymai';
+        button.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 20px;
+            border: none;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+        `;
+        
+        // Pridedame hover efektą
+        button.addEventListener('mouseenter', () => {
+            button.style.transform = 'scale(1.1)';
+        });
+        
+        button.addEventListener('mouseleave', () => {
+            button.style.transform = 'scale(1)';
+        });
+        
+        // Sukuriame konteinerį nustatymams
+        const settingsContainer = document.createElement('div');
+        settingsContainer.style.cssText = `
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            z-index: 999;
+            display: none;
+        `;
+        
+        // Sukuriame garso nustatymų komponentą
+        const audioSettings = new AudioSettings(settingsContainer);
+        
+        // Pridedame įvykio klausytoją mygtukui
+        button.addEventListener('click', () => {
+            if (settingsContainer.style.display === 'none') {
+                settingsContainer.style.display = 'block';
+            } else {
+                settingsContainer.style.display = 'none';
+            }
+        });
+        
+        // Pridedame elementus į DOM
+        document.body.appendChild(button);
+        document.body.appendChild(settingsContainer);
     }
 
     validateCanvas(canvasId) {
@@ -84,6 +153,9 @@ export class GameManager {
         this.game1 = null;
         this.game2 = null;
         this.isRunning = false;
+        
+        // Sustabdome foninę muziką
+        this.audioManager.stopBackgroundMusic();
     }
 
     startGameLoop() {

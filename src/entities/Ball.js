@@ -1,4 +1,5 @@
 import { GAME_CONFIG } from '../config/constants.js';
+import { AudioManager } from '../managers/audio/AudioManager.js';
 
 export class Ball {
     constructor(x, y, isStuck = true) {
@@ -12,6 +13,9 @@ export class Ball {
         this.color = 'red';
         this.stuck = isStuck;
         this.explosive = false;
+        
+        // Garso valdiklis
+        this.audioManager = AudioManager.getInstance();
     }
 
     update(paddle, globalSpeedMultiplier) {
@@ -28,9 +32,13 @@ export class Ball {
         // Sienos kolizijos
         if (this.x + this.radius > GAME_CONFIG.CANVAS_WIDTH || this.x - this.radius < 0) {
             this.dx *= -1;
+            // Grojame atšokimo nuo sienos garsą
+            this.audioManager.playSound('ballHit');
         }
         if (this.y - this.radius < 0) {
             this.dy *= -1;
+            // Grojame atšokimo nuo sienos garsą
+            this.audioManager.playSound('ballHit');
         }
         
         // Kamuoliukas nukrito
@@ -57,6 +65,10 @@ export class Ball {
             this.dx = Math.cos(angle) * speed;
             this.dy = -Math.abs(Math.sin(angle) * speed);
             this.currentSpeed = Math.min(this.currentSpeed + 0.02, 3);
+            
+            // Grojame atšokimo nuo platformos garsą
+            this.audioManager.playSound('ballPaddle');
+            
             return true;
         }
         return false;

@@ -5,9 +5,9 @@
 ## 1 Etapas: Pagrindinis Funkcionalumas (Trumpalaikis planas)
 
 ### Garso Sistema
-- [ ] Pridėti pagrindinius garso efektus (kamuoliuko atšokimas, blokų sunaikinimas)
-- [ ] Pridėti foninę muziką
-- [ ] Sukurti garso nustatymų valdiklį
+- [x] Pridėti pagrindinius garso efektus (kamuoliuko atšokimas, blokų sunaikinimas)
+- [x] Pridėti foninę muziką
+- [x] Sukurti garso nustatymų valdiklį
 
 ### Žaidimo Valdymas
 - [ ] Įgyvendinti žaidimo pauzės funkciją
