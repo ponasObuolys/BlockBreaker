@@ -35,7 +35,7 @@
 
 2. Atidarykite `index.html` failą savo naršyklėje arba naudokite lokalų serverį:
    ```
-   npx server
+   npx http-server -o
    ```
 
 ## Kaip žaisti

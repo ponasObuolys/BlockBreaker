@@ -195,6 +195,31 @@ export class AudioManager {
     }
 
     /**
+     * Pristabdo foninę muziką (pauzė)
+     */
+    pauseBackgroundMusic() {
+        if (this.backgroundMusic && !this.backgroundMusic.paused) {
+            this.backgroundMusic.pause();
+            console.log('AudioManager: Pristabdyta foninė muzika');
+        }
+    }
+
+    /**
+     * Atnaujina foninės muzikos grojimą po pauzės
+     */
+    resumeBackgroundMusic() {
+        if (this.musicEnabled && this.backgroundMusic && this.backgroundMusic.paused) {
+            const playPromise = this.backgroundMusic.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.error('AudioManager: Klaida atnaujinant foninę muziką:', error);
+                });
+            }
+            console.log('AudioManager: Atnaujinta foninė muzika');
+        }
+    }
+
+    /**
      * Įjungia/išjungia garso efektus
      * @param {boolean} enabled - Ar garso efektai įjungti
      */

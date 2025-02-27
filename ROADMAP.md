@@ -10,9 +10,9 @@
 - [x] Sukurti garso nustatymų valdiklį
 
 ### Žaidimo Valdymas
-- [ ] Įgyvendinti žaidimo pauzės funkciją
-- [ ] Pridėti žaidimo nustatymų meniu
-- [ ] Pagerinti klaidų apdorojimą ir pranešimus žaidėjui
+- [x] Įgyvendinti žaidimo pauzės funkciją
+- [x] Pridėti žaidimo nustatymų meniu
+- [x] Pagerinti klaidų apdorojimą ir pranešimus žaidėjui
 
 ### Mobilios Versijos Palaikymas
 - [ ] Optimizuoti žaidimą liečiamiesiems ekranams
@@ -32,9 +32,9 @@
 - [ ] Įgyvendinti iššūkių režimą su specifinėmis užduotimis
 
 ### Žaidėjų Profiliai
-- [ ] Sukurti žaidėjų profilių sistemą
-- [ ] Įgyvendinti žaidėjų statistikos sekimą
-- [ ] Pridėti žaidėjų pasiekimų sistemą
+- [x] Sukurti žaidėjų profilių sistemą
+- [x] Įgyvendinti žaidėjų statistikos sekimą
+- [x] Pridėti žaidėjų pasiekimų sistemą
 
 ## 3 Etapas: Išplėstinis Funkcionalumas (Ilgalaikis planas)
 
@@ -87,7 +87,7 @@
 ### Dokumentacija
 - [ ] Sukurti išsamią kodo dokumentaciją
 - [ ] Parengti žaidimo kūrimo vadovą naujiems prisidedantiems
-- [ ] Reguliariai atnaujinti ROADMAP ir README dokumentus
+- [x] Reguliariai atnaujinti ROADMAP ir README dokumentus
 
 ---
 

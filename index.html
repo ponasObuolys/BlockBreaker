@@ -222,10 +222,13 @@
                             <div className="flex items-center gap-4">
                                 <span className="text-amber-400 font-bold">{index + 1}</span>
                                 <span className="text-white">{score.name}</span>
+                                {score.won && <span className="text-emerald-400 text-sm">🏆</span>}
                             </div>
                             <div className="flex gap-4 text-sm">
                                 <span className="text-emerald-400">{score.score} tšk.</span>
                                 <span className="text-blue-400">{Math.floor(score.time / 60)}:{(score.time % 60).toString().padStart(2, '0')}</span>
+                                <span className="text-amber-400">Lygis: {score.level || 1}</span>
+                                <span className="text-gray-400">{new Date(score.date).toLocaleDateString()}</span>
                             </div>
                         </div>
                     ))}
@@ -240,6 +243,9 @@
                 document.getElementById('highScores')
             );
         }
+
+        // Eksportuojame funkciją į globalią erdvę, kad Game klasė galėtų ją iškviesti
+        window.updateScoreBoard = updateScoreBoard;
 
         setInterval(updateScoreBoard, 1000);
         updateScoreBoard();
